@@ -15,7 +15,7 @@
 #define TL_FUNCTION_REF_HPP
 
 #define TL_FUNCTION_REF_VERSION_MAJOR 0
-#define TL_FUNCTION_REF_VERSION_MINOR 1
+#define TL_FUNCTION_REF_VERSION_MINOR 2
 
 #if (defined(_MSC_VER) && _MSC_VER == 1900)
 /// \exclude
@@ -141,7 +141,8 @@ public:
   constexpr function_ref() noexcept = delete;
 
   /// Creates a `function_ref` which refers to the same callable as `rhs`.
-    constexpr function_ref(const function_ref<R(Args...)> &rhs) noexcept = default;
+  constexpr function_ref(const function_ref<R(Args...)> &rhs) noexcept =
+      default;
 
   /// Constructs a `function_ref` referring to `f`.
   ///
@@ -169,11 +170,13 @@ public:
 
   /// Makes `*this` refer to `f`.
   ///
-  /// \synopsis template <typename F> constexpr function_ref &operator=(F &&f) noexcept;
+  /// \synopsis template <typename F> constexpr function_ref &operator=(F &&f)
+  /// noexcept;
   template <typename F,
             detail::enable_if_t<detail::is_invocable_r<R, F &&, Args...>::value>
                 * = nullptr>
-  TL_FUNCTION_REF_11_CONSTEXPR function_ref<R(Args...)> &operator=(F &&f) noexcept {
+  TL_FUNCTION_REF_11_CONSTEXPR function_ref<R(Args...)> &
+  operator=(F &&f) noexcept {
     obj_ = reinterpret_cast<void *>(std::addressof(f));
     callback_ = [](void *obj, Args... args) {
       return detail::invoke(
