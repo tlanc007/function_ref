@@ -110,6 +110,13 @@ template <class F, class... Us>
 using invoke_result_t = typename invoke_result<F, Us...>::type;
 #endif
 
+#define FORCE_TRUE 1
+#if FORCE_TRUE
+    // This is bad hack to always force true.
+template <class, class R, class F, class... Args>
+    struct is_invocable_r_impl : std::true_type {}; //std::false_type {};
+
+#else
 template <class, class R, class F, class... Args>
 struct is_invocable_r_impl : std::false_type {};
 
@@ -117,6 +124,7 @@ template <class R, class F, class... Args>
 struct is_invocable_r_impl<
     typename std::is_same<invoke_result_t<F, Args...>, R>::type, R, F, Args...>
     : std::true_type {};
+#endif
 
 template <class R, class F, class... Args>
 using is_invocable_r = is_invocable_r_impl<std::true_type, R, F, Args...>;
